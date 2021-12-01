@@ -129,3 +129,6 @@ src/test
 
 #server file
 run/
+
+#bot token
+src/main/resources/token.txt

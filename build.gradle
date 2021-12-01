@@ -19,10 +19,11 @@ repositories {
 }
 
 dependencies {
-    compileOnly "io.papermc.paper:paper-api:1.18-R0.1-SNAPSHOT"
-    //compileOnly 'io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT'
+    //compileOnly "io.papermc.paper:paper-api:1.18-R0.1-SNAPSHOT"
+    compileOnly 'io.papermc.paper:paper-api:1.17.1-R0.1-SNAPSHOT'
     implementation "net.kyori:adventure-text-minimessage:4.2.0-SNAPSHOT"
     implementation 'jeeper.utils:PaperPluginUtils:0.1.1'
+    implementation 'net.dv8tion:JDA:5.0.0-alpha.1'
 }
 
 
@@ -31,6 +32,6 @@ tasks {
         // Configure the Minecraft version for our task.
         // This is the only required configuration besides applying the plugin.
         // Your plugin's jar (or shadowJar if present) will be used automatically.
-        minecraftVersion("1.18")
+        minecraftVersion("1.17")
     }
 }
