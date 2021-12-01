@@ -6,12 +6,11 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.security.auth.login.LoginException;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.Map;
+import java.io.InputStream;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -20,7 +19,7 @@ public class Main extends JavaPlugin {
     private static Main plugin;
     private static ConfigSetup playerData;
     private static ConfigSetup config;
-    private static JDA jda;
+    public static JDA jda;
 
     @Override
     public void onEnable() {
@@ -33,21 +32,41 @@ public class Main extends JavaPlugin {
         Objects.requireNonNull(this.getCommand("smpizza")).setTabCompleter(new Reload());
         Main.getPlugin().getServer().getPluginManager().registerEvents(new Chat(), Main.getPlugin());
         Main.getPlugin().getServer().getPluginManager().registerEvents(new CancelCrystal(), Main.getPlugin());
+        Main.getPlugin().getServer().getPluginManager().registerEvents(new JoinLeave(), Main.getPlugin());
+        Main.getPlugin().getServer().getPluginManager().registerEvents(new DeathMessage(), Main.getPlugin());
 
         //discord bot
-        try {
-            Scanner scanner = new Scanner(new File("src/main/resources/token.txt"));
-            String token = scanner.nextLine();
+        jda = createJDA();
 
-            jda = JDABuilder.createDefault(token)
-                    .setChunkingFilter(ChunkingFilter.ALL)
-                    .setMemberCachePolicy(MemberCachePolicy.ALL)
-                    .enableIntents(GatewayIntent.GUILD_MEMBERS)
-                    .build();
-        } catch (LoginException | FileNotFoundException e) {
-            e.printStackTrace();
-            System.exit(1);
+        if (jda == null) {
+            this.getPluginLoader().disablePlugin(this);
         }
+
+        jda.addEventListener(new DiscordChat());
+
+        Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this, () ->  {
+            try {
+                Objects.requireNonNull(jda).getSelfUser().getMutualGuilds().forEach(guild -> {
+                    Objects.requireNonNull(guild.getTextChannelById(775525737628172328L)).sendMessage("<:diamond:778407418916372480> **Server Online**").queue();
+                });
+            } catch (NullPointerException e) {
+                Bukkit.getLogger().info("Could not send message to guild");
+            }
+        }, 50L);
+
+
+    }
+
+    @Override
+    public void onDisable() {
+        try {
+            Objects.requireNonNull(Objects.requireNonNull(jda.getGuildById(775521131708022784L))
+                            .getTextChannelById(775525737628172328L))
+                            .sendMessage(":warning: **Server Offline**").queue();
+        } catch (NullPointerException e) {
+            Bukkit.getLogger().info("Could not send message to guild");
+        }
+        jda.shutdownNow();
     }
 
     public static Main getPlugin() {
@@ -58,7 +77,6 @@ public class Main extends JavaPlugin {
         return playerData;
     }
     public ConfigSetup config() { return config; }
-    public JDA getJda() { return jda; }
 
     private void startFileSetup() {
         getConfig().options().copyDefaults();
@@ -88,6 +106,28 @@ public class Main extends JavaPlugin {
         playerData.get().options().copyDefaults(false);
         playerData.save();
 
+    }
+
+    private JDA createJDA() {
+        try {
+            InputStream ioStream = this.getClass()
+                    .getClassLoader()
+                    .getResourceAsStream("token.txt");
+
+            Scanner scanner = new Scanner(Objects.requireNonNull(ioStream));
+            String token = scanner.nextLine();
+
+            return JDABuilder.createDefault(token)
+                    .setChunkingFilter(ChunkingFilter.ALL)
+                    .setMemberCachePolicy(MemberCachePolicy.ALL)
+                    .enableIntents(GatewayIntent.GUILD_MEMBERS)
+                    .build();
+
+        } catch (LoginException | NullPointerException e) {
+            e.printStackTrace();
+            this.getPluginLoader().disablePlugin(this);
+            return null;
+        }
     }
 
 }

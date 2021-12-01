@@ -1,6 +1,6 @@
 name: SMPizza
 version: 1.0
-api-version: 1.18
+api-version: 1.17
 description: Pizza
 author: Jeeper_
 main: smp.pizza.Main
