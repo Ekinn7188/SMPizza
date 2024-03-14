@@ -2,10 +2,12 @@ package smp.pizza;
 
 import io.papermc.paper.event.player.AsyncChatEvent;
 import jeeper.utils.MessageTools;
-import jeeper.utils.config.ConfigSetup;
-import net.dv8tion.jda.api.JDA;
+import jeeper.utils.config.Config;
+import net.dv8tion.jda.api.interactions.commands.Command;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.Template;
+import net.kyori.adventure.text.ComponentBuilder;
+import net.kyori.adventure.text.event.HoverEventSource;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -16,8 +18,8 @@ import java.util.Objects;
 
 public class Chat implements Listener {
 
-    ConfigSetup playerdata = Main.getPlugin().getPlayerData();
-    ConfigSetup config = Main.getPlugin().config();
+    Config playerdata = Main.getPlugin().getPlayerData();
+    Config config = Main.getPlugin().config();
 
     @EventHandler
     public void onChat(AsyncChatEvent e){
@@ -32,19 +34,37 @@ public class Chat implements Listener {
 
         String messageString = PlainTextComponentSerializer.plainText().serialize(e.message());
 
+        Component tag = Component.empty();
+
+        String role = playerdata.get().getString(player.getUniqueId() + ".tag");
+
+        if (role != null) {
+            if (role.equals("admin")) {
+                // Sword character \uD83D\uDDE1
+                tag = MessageTools.parseText(
+                        "<hover:show_text:'&7This player is an " + chatcolor + "Admin&7. &7They have operator permissions. They also have access to the server's files. If you need anything, these are the people to ask.'>" +
+                                "<dark_gray>[" + chatcolor + "\uD83D\uDDE1"+ chatcolor.replace("<", "</") + "]</dark_gray></hover> ");
+            }
+            else if (role.equals("mod")) {
+                // Bow character \uD83C\uDFF9
+                tag = MessageTools.parseText(
+                        "<hover:show_text:'&7This player is a " + chatcolor + "Mod&7. &7They have coreinspect and limited console access. If you need a container checked, or if you a question, then these are the people to ask.'>" +
+                        "<dark_gray>[" + chatcolor + "\uD83C\uDFF9" + chatcolor.replace("<", "</") + "]</dark_gray></hover> ");
+            }
+        }
+
         Component replacedText = MessageTools.parseFromPath(config, "Chat",
-                Template.template("player", MessageTools.parseText(chatcolor + player.getName())), Template.template("message", messageString));
+                Placeholder.component("tag", tag),
+                Placeholder.parsed("player", chatcolor + player.getName()), Placeholder.parsed("message", messageString));
 
         Bukkit.broadcast(replacedText);
 
         Main.jda.getSelfUser().getMutualGuilds().forEach(guild -> {
             try {
-                Objects.requireNonNull(guild.getTextChannelById(775525737628172328L)).sendMessage("[" + e.getPlayer().getName() + "]: " + messageString).queue();
+                Objects.requireNonNull(guild.getTextChannelById(1077335479638298645L)).sendMessage("**[" + e.getPlayer().getName() + "]:** " + messageString).queue();
             } catch (NullPointerException exception){
                 Bukkit.getLogger().info("Could not send message to guild " + guild.getName());
             }
         });
-
     }
-
 }

@@ -1,24 +1,26 @@
 package smp.pizza;
 
-import jeeper.utils.config.ConfigSetup;
+import jeeper.utils.config.Config;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
+import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import javax.security.auth.login.LoginException;
 import java.io.InputStream;
+import java.util.EnumSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
 
 public class Main extends JavaPlugin {
 
     private static Main plugin;
-    private static ConfigSetup playerData;
-    private static ConfigSetup config;
+    private static Config playerData;
+    private static Config config;
     public static JDA jda;
 
     @Override
@@ -30,24 +32,38 @@ public class Main extends JavaPlugin {
         Objects.requireNonNull(this.getCommand("chatcolor")).setExecutor(new NameColor());
         Objects.requireNonNull(this.getCommand("smpizza")).setExecutor(new Reload());
         Objects.requireNonNull(this.getCommand("smpizza")).setTabCompleter(new Reload());
+        Objects.requireNonNull(this.getCommand("cd")).setExecutor(new CdList());
+        Objects.requireNonNull(this.getCommand("cd")).setTabCompleter(new CdList());
+        Objects.requireNonNull(this.getCommand("mod")).setExecutor(new Mod());
+        Objects.requireNonNull(this.getCommand("mod")).setTabCompleter(new DefaultTabCompleter());
+        Objects.requireNonNull(this.getCommand("admin")).setExecutor(new Admin());
+        Objects.requireNonNull(this.getCommand("admin")).setTabCompleter(new DefaultTabCompleter());
         Main.getPlugin().getServer().getPluginManager().registerEvents(new Chat(), Main.getPlugin());
         Main.getPlugin().getServer().getPluginManager().registerEvents(new CancelCrystal(), Main.getPlugin());
         Main.getPlugin().getServer().getPluginManager().registerEvents(new JoinLeave(), Main.getPlugin());
         Main.getPlugin().getServer().getPluginManager().registerEvents(new DeathMessage(), Main.getPlugin());
+        Main.getPlugin().getServer().getPluginManager().registerEvents(new AchievementMessage(), Main.getPlugin());
 
         //discord bot
         jda = createJDA();
 
         if (jda == null) {
-            this.getPluginLoader().disablePlugin(this);
+            this.getServer().getPluginManager().disablePlugin(this);
         }
 
         jda.addEventListener(new DiscordChat());
 
+        for (Command cmd : jda.retrieveCommands().complete()) {
+            cmd.delete().complete();
+        }
+
+        jda.upsertCommand("onlineplayers", "Check who is currently on the server.")
+                .queue();
+
         Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this, () ->  {
             try {
                 Objects.requireNonNull(jda).getSelfUser().getMutualGuilds().forEach(guild -> {
-                    Objects.requireNonNull(guild.getTextChannelById(775525737628172328L)).sendMessage("<:diamond:778407418916372480> **Server Online**").queue();
+                    Objects.requireNonNull(guild.getTextChannelById(1077335479638298645L)).sendMessage("**[<:diamond:778407418916372480>] Server Online**").queue();
                 });
             } catch (NullPointerException e) {
                 Bukkit.getLogger().info("Could not send message to guild");
@@ -61,8 +77,8 @@ public class Main extends JavaPlugin {
     public void onDisable() {
         try {
             Objects.requireNonNull(Objects.requireNonNull(jda.getGuildById(775521131708022784L))
-                            .getTextChannelById(775525737628172328L))
-                            .sendMessage(":warning: **Server Offline**").queue();
+                            .getTextChannelById(1077335479638298645L))
+                            .sendMessage("**[:octagonal_sign:] Server Offline**").queue();
         } catch (NullPointerException e) {
             Bukkit.getLogger().info("Could not send message to guild");
         }
@@ -73,36 +89,36 @@ public class Main extends JavaPlugin {
         return plugin;
     }
 
-    public ConfigSetup getPlayerData() {
+    public Config getPlayerData() {
         return playerData;
     }
-    public ConfigSetup config() { return config; }
+    public Config config() { return config; }
 
     private void startFileSetup() {
         getConfig().options().copyDefaults();
         saveDefaultConfig();
 
-        String header = """
+        List<String> header = List.of("""
                 ############################################################
                 # +------------------------------------------------------+ #
                 # |                       SMPizza                        | #
                 # +------------------------------------------------------+ #
                 ############################################################
                                 
-                Developed by: Jeeper_ (Jeeper#6808)
-                """;
+                Developed by: Jeeper_
+                """.split("\\n"));
 
-        config = new ConfigSetup("config", "SMPizza");
-        config.get().options().header(header);
+        config = new Config("config", "SMPizza");
+        config.get().options().setHeader(header);
         config.readDefaults(this, "config.yml");
-        config.get().options().copyHeader(true);
+        config.get().options().parseComments(true);
         config.get().options().copyDefaults(false);
         config.save();
         
         
-        playerData = new ConfigSetup("playerdata", "SMPizza");
-        playerData.get().options().header(header);
-        playerData.get().options().copyHeader(true);
+        playerData = new Config("playerdata", "SMPizza");
+        playerData.get().options().setHeader(header);
+        playerData.get().options().parseComments(true);
         playerData.get().options().copyDefaults(false);
         playerData.save();
 
@@ -120,12 +136,12 @@ public class Main extends JavaPlugin {
             return JDABuilder.createDefault(token)
                     .setChunkingFilter(ChunkingFilter.ALL)
                     .setMemberCachePolicy(MemberCachePolicy.ALL)
-                    .enableIntents(GatewayIntent.GUILD_MEMBERS)
+                    .enableIntents(EnumSet.allOf(GatewayIntent.class))
                     .build();
 
-        } catch (LoginException | NullPointerException e) {
+        } catch (NullPointerException e) {
             e.printStackTrace();
-            this.getPluginLoader().disablePlugin(this);
+            this.getServer().getPluginManager().disablePlugin(this);
             return null;
         }
     }

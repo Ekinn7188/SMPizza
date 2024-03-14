@@ -10,3 +10,13 @@ commands:
     aliases: [color, setcolor, cc]
   smpizza:
     description: used to reload yml files
+    default: op
+  cd:
+    description: cd command for CustomDiscs plugin
+    aliases: [customdisc]
+  mod:
+    description: gives a player the moderator tag
+    default: op
+  admin:
+    description: gives a player the administrator tag
+    default: op
