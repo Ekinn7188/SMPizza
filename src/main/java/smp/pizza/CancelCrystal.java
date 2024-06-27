@@ -13,7 +13,7 @@ public class CancelCrystal implements Listener {
 
     @EventHandler
     public void onCrystalUse(EntityDamageByEntityEvent e) {
-        if (e.getDamager().getType().equals(EntityType.ENDER_CRYSTAL) && e.getEntityType().equals(EntityType.DROPPED_ITEM)) {
+        if (e.getDamager().getType().equals(EntityType.END_CRYSTAL) && e.getEntityType().equals(EntityType.ITEM)) {
             e.setCancelled(true);
         }
     }
@@ -21,7 +21,7 @@ public class CancelCrystal implements Listener {
     @EventHandler
     public void onAnchorUse(EntityDamageByBlockEvent e) {
         try {
-            if (Objects.requireNonNull(e.getDamager()).getType().equals(Material.RESPAWN_ANCHOR) && e.getEntityType().equals(EntityType.DROPPED_ITEM)) {
+            if (Objects.requireNonNull(e.getDamager()).getType().equals(Material.RESPAWN_ANCHOR) && e.getEntityType().equals(EntityType.ITEM)) {
                 e.setCancelled(true);
             }
         } catch (NullPointerException exception) {

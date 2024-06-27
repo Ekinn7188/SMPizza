@@ -32,7 +32,7 @@ public class CdList implements CommandExecutor, TabCompleter {
         switch (args[0]) {
             case "list":
                 try {
-                    List<Path> stream = Files.list(new File(Main.getPlugin().getDataFolder().getParent() + "\\CustomDiscs\\musicdata").toPath()).toList();
+                    List<Path> stream = Files.list(new File(Main.getPlugin().getDataFolder().getParent() + "/CustomDiscs/musicdata").toPath()).toList();
                     List<String> result = stream.stream().map(x -> x.toString().substring(30)).toList();
 
                     StringBuilder sb = new StringBuilder();

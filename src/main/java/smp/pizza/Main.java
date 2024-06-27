@@ -38,6 +38,9 @@ public class Main extends JavaPlugin {
         Objects.requireNonNull(this.getCommand("mod")).setTabCompleter(new DefaultTabCompleter());
         Objects.requireNonNull(this.getCommand("admin")).setExecutor(new Admin());
         Objects.requireNonNull(this.getCommand("admin")).setTabCompleter(new DefaultTabCompleter());
+        Objects.requireNonNull(this.getCommand("member")).setExecutor(new Member());
+        Objects.requireNonNull(this.getCommand("member")).setTabCompleter(new DefaultTabCompleter());
+        Objects.requireNonNull(this.getCommand("ping")).setExecutor(new Ping());
         Main.getPlugin().getServer().getPluginManager().registerEvents(new Chat(), Main.getPlugin());
         Main.getPlugin().getServer().getPluginManager().registerEvents(new CancelCrystal(), Main.getPlugin());
         Main.getPlugin().getServer().getPluginManager().registerEvents(new JoinLeave(), Main.getPlugin());
@@ -58,6 +61,8 @@ public class Main extends JavaPlugin {
         }
 
         jda.upsertCommand("onlineplayers", "Check who is currently on the server.")
+                .queue();
+        jda.upsertCommand("tps", "Check tps.")
                 .queue();
 
         Bukkit.getServer().getScheduler().scheduleSyncDelayedTask(this, () ->  {

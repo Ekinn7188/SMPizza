@@ -16,7 +16,10 @@ public class JoinLeave implements Listener {
         Main.jda.getSelfUser().getMutualGuilds().forEach(guild -> {
             try {
                 Objects.requireNonNull(guild.getTextChannelById(1077335479638298645L))
-                        .sendMessage("**[<:enter:778395035841986561>]** " + e.getPlayer().getName()).queue();
+                        .sendMessage("**[<:enter:778395035841986561>] " + e.getPlayer().getName()
+                                .replaceAll("_", "\\\\_")
+                                .replaceAll("\\*", "\\\\*")
+                                .replaceAll("~", "\\\\~") + "**").queue();
             } catch (NullPointerException exception){
                 Bukkit.getLogger().info("Could not send message to guild " + guild.getName());
             }
@@ -38,6 +41,10 @@ public class JoinLeave implements Listener {
         attachment.setPermission("imageframe.delete", true);
         attachment.setPermission("imageframe.get", true);
 
+        attachment.setPermission("bukkit.command.tps", true);
+        attachment.setPermission("bukkit.command.mspt", true);
+
+
     }
 
     @EventHandler
@@ -45,7 +52,10 @@ public class JoinLeave implements Listener {
         Main.jda.getSelfUser().getMutualGuilds().forEach(guild -> {
             try {
                 Objects.requireNonNull(guild.getTextChannelById(1077335479638298645L))
-                        .sendMessage("**[<:quit:778395035385200663>]** " + e.getPlayer().getName()).queue();
+                        .sendMessage("**[<:quit:778395035385200663>] " + e.getPlayer().getName()
+                                .replaceAll("_", "\\\\_")
+                                .replaceAll("\\*", "\\\\*")
+                                .replaceAll("~", "\\\\~") + "**").queue();
             } catch (NullPointerException exception){
                 Bukkit.getLogger().info("Could not send message to guild " + guild.getName());
             }

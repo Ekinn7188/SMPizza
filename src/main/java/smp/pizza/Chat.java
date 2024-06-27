@@ -1,12 +1,10 @@
 package smp.pizza;
 
+import com.vdurmont.emoji.EmojiParser;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import jeeper.utils.MessageTools;
 import jeeper.utils.config.Config;
-import net.dv8tion.jda.api.interactions.commands.Command;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.ComponentBuilder;
-import net.kyori.adventure.text.event.HoverEventSource;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
@@ -33,6 +31,14 @@ public class Chat implements Listener {
         Player player = e.getPlayer();
 
         String messageString = PlainTextComponentSerializer.plainText().serialize(e.message());
+        messageString = EmojiParser.parseToUnicode(messageString);
+
+
+        String discordMessageString = PlainTextComponentSerializer.plainText().serialize(MessageTools.parseText(messageString))
+                .replaceAll("_", "\\\\_")
+                .replaceAll("\\*", "\\\\*")
+                .replaceAll("~", "\\\\~");
+
 
         Component tag = Component.empty();
 
@@ -55,13 +61,16 @@ public class Chat implements Listener {
 
         Component replacedText = MessageTools.parseFromPath(config, "Chat",
                 Placeholder.component("tag", tag),
-                Placeholder.parsed("player", chatcolor + player.getName()), Placeholder.parsed("message", messageString));
+                Placeholder.parsed("player", chatcolor + player.getName() + chatcolor.replaceAll("<", "</")), Placeholder.component("message", MessageTools.parseText(messageString)));
 
         Bukkit.broadcast(replacedText);
 
+
         Main.jda.getSelfUser().getMutualGuilds().forEach(guild -> {
             try {
-                Objects.requireNonNull(guild.getTextChannelById(1077335479638298645L)).sendMessage("**[" + e.getPlayer().getName() + "]:** " + messageString).queue();
+                Objects.requireNonNull(guild.getTextChannelById(1077335479638298645L))
+                        .sendMessage("**[" + e.getPlayer().getName().replaceAll("_", "\\\\_").replaceAll("\\*", "\\\\*").replaceAll("~", "\\\\~")
+                                + "]:** " + discordMessageString).queue();
             } catch (NullPointerException exception){
                 Bukkit.getLogger().info("Could not send message to guild " + guild.getName());
             }

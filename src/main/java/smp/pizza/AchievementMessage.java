@@ -4,7 +4,7 @@ import io.papermc.paper.advancement.AdvancementDisplay;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.advancement.Advancement;
-import org.bukkit.craftbukkit.v1_20_R1.advancement.CraftAdvancement;
+import org.bukkit.craftbukkit.advancement.CraftAdvancement;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerAdvancementDoneEvent;
