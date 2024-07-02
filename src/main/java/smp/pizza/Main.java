@@ -41,6 +41,7 @@ public class Main extends JavaPlugin {
         Objects.requireNonNull(this.getCommand("member")).setExecutor(new Member());
         Objects.requireNonNull(this.getCommand("member")).setTabCompleter(new DefaultTabCompleter());
         Objects.requireNonNull(this.getCommand("ping")).setExecutor(new Ping());
+        Objects.requireNonNull(this.getCommand("ping")).setTabCompleter(new DefaultTabCompleter());
         Main.getPlugin().getServer().getPluginManager().registerEvents(new Chat(), Main.getPlugin());
         Main.getPlugin().getServer().getPluginManager().registerEvents(new CancelCrystal(), Main.getPlugin());
         Main.getPlugin().getServer().getPluginManager().registerEvents(new JoinLeave(), Main.getPlugin());
