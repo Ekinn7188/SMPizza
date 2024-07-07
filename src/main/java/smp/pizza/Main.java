@@ -42,12 +42,20 @@ public class Main extends JavaPlugin {
         Objects.requireNonNull(this.getCommand("member")).setTabCompleter(new DefaultTabCompleter());
         Objects.requireNonNull(this.getCommand("ping")).setExecutor(new Ping());
         Objects.requireNonNull(this.getCommand("ping")).setTabCompleter(new DefaultTabCompleter());
+        Objects.requireNonNull(this.getCommand("mute")).setExecutor(new Mute());
+        Objects.requireNonNull(this.getCommand("mute")).setTabCompleter(new DefaultTabCompleter());
+        Objects.requireNonNull(this.getCommand("unmute")).setExecutor(new Unmute());
+        Objects.requireNonNull(this.getCommand("unmute")).setTabCompleter(new DefaultTabCompleter());
+        Objects.requireNonNull(this.getCommand("hat")).setExecutor(new Hat());
+
+
         Main.getPlugin().getServer().getPluginManager().registerEvents(new Chat(), Main.getPlugin());
         Main.getPlugin().getServer().getPluginManager().registerEvents(new CancelCrystal(), Main.getPlugin());
         Main.getPlugin().getServer().getPluginManager().registerEvents(new JoinLeave(), Main.getPlugin());
         Main.getPlugin().getServer().getPluginManager().registerEvents(new DeathMessage(), Main.getPlugin());
         Main.getPlugin().getServer().getPluginManager().registerEvents(new AchievementMessage(), Main.getPlugin());
         Main.getPlugin().getServer().getPluginManager().registerEvents(new PlayerHeads(), Main.getPlugin());
+        Main.getPlugin().getServer().getPluginManager().registerEvents(new PreventCommand(), Main.getPlugin());
 
         //discord bot
         jda = createJDA();

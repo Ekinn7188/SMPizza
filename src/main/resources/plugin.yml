@@ -30,3 +30,13 @@ commands:
     permission: smpizza.member
   ping:
     description: send a player their ping
+  mute:
+    description: mute a player
+    default: op
+    permission: smpizza.mute
+  unmute:
+    description: unmute a player
+    default: op
+    permission: smpizza.mute
+  hat:
+    description: put something on your head

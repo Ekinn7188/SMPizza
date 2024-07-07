@@ -23,6 +23,12 @@ public class Chat implements Listener {
     public void onChat(AsyncChatEvent e){
         e.setCancelled(true);
 
+        boolean isMuted = playerdata.get().getBoolean(e.getPlayer().getUniqueId() + ".muted");
+        if (isMuted){
+            e.getPlayer().sendMessage(MessageTools.parseText("<red>You can not talk while you're muted."));
+            return;
+        }
+
         String chatcolor = playerdata.get().getString(e.getPlayer().getUniqueId() + ".chatcolor");
         if (chatcolor == null){
             chatcolor = "<#42EB8a>";
