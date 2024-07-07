@@ -47,6 +47,7 @@ public class Main extends JavaPlugin {
         Main.getPlugin().getServer().getPluginManager().registerEvents(new JoinLeave(), Main.getPlugin());
         Main.getPlugin().getServer().getPluginManager().registerEvents(new DeathMessage(), Main.getPlugin());
         Main.getPlugin().getServer().getPluginManager().registerEvents(new AchievementMessage(), Main.getPlugin());
+        Main.getPlugin().getServer().getPluginManager().registerEvents(new PlayerHeads(), Main.getPlugin());
 
         //discord bot
         jda = createJDA();
