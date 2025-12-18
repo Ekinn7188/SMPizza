@@ -9,7 +9,9 @@ public class PreventCommand implements Listener {
 
     @EventHandler
     public void onCommand(PlayerCommandPreprocessEvent e) {
-        if (e.getMessage().contains("trigger") && !e.getPlayer().isOp()) {
+
+        // "as" for "armor stands" datapack
+        if (e.getMessage().contains("trigger") && !e.getMessage().contains("as") && !e.getPlayer().isOp()) {
             e.getPlayer().sendMessage(MessageTools.parseText("<red>You do not have permission to do this."));
             e.setCancelled(true);
         }
