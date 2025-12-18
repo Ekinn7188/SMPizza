@@ -22,6 +22,7 @@ import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.List;
 import java.util.logging.Level;
 
 public class PlayerHeads implements Listener {
@@ -31,13 +32,11 @@ public class PlayerHeads implements Listener {
         Block block = e.getBlock();
 
         if (block.getState() instanceof Skull skull) {
-            String base64ItemStack = toBase64(e.getItemInHand().getItemMeta());
+            String base64ItemStack = toBase64(e.getItemInHand());
 
-            if (base64ItemStack != null) {
-                skull.getPersistentDataContainer().set(new NamespacedKey(Main.getPlugin(), "CustomSkullData"),
-                        PersistentDataType.STRING,
-                        base64ItemStack);
-            }
+            skull.getPersistentDataContainer().set(new NamespacedKey(Main.getPlugin(), "CustomSkullData"),
+                    PersistentDataType.STRING,
+                    base64ItemStack);
         }
     }
 
@@ -50,41 +49,22 @@ public class PlayerHeads implements Listener {
                     PersistentDataType.STRING);
 
             if (data != null) {
-                ItemMeta itemMeta = fromBase64(data);
-                if (itemMeta != null) {
-                    ItemStack item = new ItemStack(Material.PLAYER_HEAD);
+                ItemStack item = fromBase64(data);
 
-                    item.setItemMeta(itemMeta);
-
-                    block.getWorld().dropItem(block.getLocation(), item);
-                }
+                block.getWorld().dropItem(block.getLocation(), item);
             }
 
 
         }
     }
 
-    private String toBase64(ItemMeta itemMeta) {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        BukkitObjectOutputStream objectOutputStream;
-        try {
-            objectOutputStream = new BukkitObjectOutputStream(outputStream);
-            objectOutputStream.writeObject(itemMeta);
-            return new String(Base64Coder.encode(outputStream.toByteArray()));
-        } catch (IOException e) {
-            Main.getPlugin().getLogger().log(Level.SEVERE, "Problem converting player head data to base64");
-            return null;
-        }
+    private String toBase64(ItemStack itemStack) {
+        byte[] serialized = ItemStack.serializeItemsAsBytes(List.of(itemStack));
+        return new String(Base64Coder.encode(serialized));
     }
 
-    private ItemMeta fromBase64(String base64) {
-        try {
-            ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64Coder.decode(base64));
-            BukkitObjectInputStream dataInput = new BukkitObjectInputStream(inputStream);
-            return (ItemMeta) dataInput.readObject();
-        } catch (IOException | ClassNotFoundException e) {
-            Main.getPlugin().getLogger().log(Level.SEVERE, "Problem converting base64 to player head data (" + e.getClass().getName() + ")");
-            return null;
-        }
+    private ItemStack fromBase64(String base64) {
+        byte[] serialized = Base64Coder.decode(base64);
+        return ItemStack.deserializeItemsFromBytes(serialized)[0];
     }
 }

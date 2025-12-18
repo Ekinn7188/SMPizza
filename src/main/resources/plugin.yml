@@ -4,6 +4,7 @@ api-version: 1.17
 description: Pizza
 author: Jeeper_
 main: smp.pizza.Main
+depend: [LuckPerms]
 commands:
   chatcolor:
     description: Sets the player's name in chat!
@@ -15,19 +16,6 @@ commands:
   cd:
     description: cd command for CustomDiscs plugin
     aliases: [customdisc]
-  mod:
-    description: gives a player the moderator tag
-    default: op
-    permission: smpizza.mod
-  admin:
-    description: gives a player the administrator tag
-    default: op
-    permission: smpizza.admin
-  member:
-    description: gives a player the member tag
-    default: op
-    aliases: [unmod, unadmin]
-    permission: smpizza.member
   ping:
     description: send a player their ping
   mute:

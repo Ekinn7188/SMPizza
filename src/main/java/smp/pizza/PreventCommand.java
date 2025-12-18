@@ -9,7 +9,6 @@ public class PreventCommand implements Listener {
 
     @EventHandler
     public void onCommand(PlayerCommandPreprocessEvent e) {
-        System.out.println(e.getMessage());
         if (e.getMessage().contains("trigger") && !e.getPlayer().isOp()) {
             e.getPlayer().sendMessage(MessageTools.parseText("<red>You do not have permission to do this."));
             e.setCancelled(true);
