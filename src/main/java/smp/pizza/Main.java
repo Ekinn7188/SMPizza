@@ -47,6 +47,8 @@ public class Main extends JavaPlugin {
         Objects.requireNonNull(this.getCommand("unmute")).setExecutor(new Unmute());
         Objects.requireNonNull(this.getCommand("unmute")).setTabCompleter(new DefaultTabCompleter());
         Objects.requireNonNull(this.getCommand("hat")).setExecutor(new Hat());
+        Objects.requireNonNull(this.getCommand("knockback")).setExecutor(new KnockbackCommand());
+        Objects.requireNonNull(this.getCommand("knockback")).setTabCompleter(new KnockbackCommand());
 
 
         Main.getPlugin().getServer().getPluginManager().registerEvents(new Chat(), Main.getPlugin());
