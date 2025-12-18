@@ -34,12 +34,6 @@ public class Main extends JavaPlugin {
         Objects.requireNonNull(this.getCommand("smpizza")).setTabCompleter(new Reload());
         Objects.requireNonNull(this.getCommand("cd")).setExecutor(new CdList());
         Objects.requireNonNull(this.getCommand("cd")).setTabCompleter(new CdList());
-        Objects.requireNonNull(this.getCommand("mod")).setExecutor(new Mod());
-        Objects.requireNonNull(this.getCommand("mod")).setTabCompleter(new DefaultTabCompleter());
-        Objects.requireNonNull(this.getCommand("admin")).setExecutor(new Admin());
-        Objects.requireNonNull(this.getCommand("admin")).setTabCompleter(new DefaultTabCompleter());
-        Objects.requireNonNull(this.getCommand("member")).setExecutor(new Member());
-        Objects.requireNonNull(this.getCommand("member")).setTabCompleter(new DefaultTabCompleter());
         Objects.requireNonNull(this.getCommand("ping")).setExecutor(new Ping());
         Objects.requireNonNull(this.getCommand("ping")).setTabCompleter(new DefaultTabCompleter());
         Objects.requireNonNull(this.getCommand("mute")).setExecutor(new Mute());

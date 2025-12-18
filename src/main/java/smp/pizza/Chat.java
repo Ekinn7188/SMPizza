@@ -7,6 +7,9 @@ import jeeper.utils.config.Config;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import net.luckperms.api.LuckPerms;
+import net.luckperms.api.LuckPermsProvider;
+import net.luckperms.api.model.user.User;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -48,22 +51,32 @@ public class Chat implements Listener {
 
         Component tag = Component.empty();
 
-        String role = playerdata.get().getString(player.getUniqueId() + ".tag");
+        LuckPerms api = LuckPermsProvider.get();
+        User user = api.getPlayerAdapter(Player.class).getUser(player);
+        String group = user.getPrimaryGroup();
 
-        if (role != null) {
-            if (role.equals("admin")) {
+        tag = switch (group) {
+            case "admin" ->
                 // Sword character \uD83D\uDDE1
-                tag = MessageTools.parseText(
-                        "<hover:show_text:'&7This player is an " + chatcolor + "Admin&7. &7They have operator permissions. They also have access to the server's files. If you need anything, these are the people to ask.'>" +
-                                "<dark_gray>[" + chatcolor + "\uD83D\uDDE1"+ chatcolor.replace("<", "</") + "]</dark_gray></hover> ");
-            }
-            else if (role.equals("mod")) {
+                    MessageTools.parseText(
+                            "<hover:show_text:'&7This player is an " + chatcolor + "Admin&7. &7They have operator permissions. They also have access to the server's files. If you need anything, these are the people to ask.'>" +
+                                    "<dark_gray>[" + chatcolor + "\uD83D\uDDE1" + chatcolor.replace("<", "</") + "]</dark_gray></hover> ");
+            case "sr-mod" ->
+                // Sword character \uD83D\uDDE1
+                    MessageTools.parseText(
+                            "<hover:show_text:'&7This player is a " + chatcolor + "Sr. Mod&7. &7They have coreinspect, invsee, and limited console access. If you need a container checked, or if you a question, then these are the people to ask.'>" +
+                                    "<dark_gray>[" + chatcolor + "\uD83D\uDDE1" + chatcolor.replace("<", "</") + "]</dark_gray></hover> ");
+            case "mod" ->
                 // Bow character \uD83C\uDFF9
-                tag = MessageTools.parseText(
-                        "<hover:show_text:'&7This player is a " + chatcolor + "Mod&7. &7They have coreinspect and limited console access. If you need a container checked, or if you a question, then these are the people to ask.'>" +
-                        "<dark_gray>[" + chatcolor + "\uD83C\uDFF9" + chatcolor.replace("<", "</") + "]</dark_gray></hover> ");
-            }
-        }
+                    MessageTools.parseText(
+                            "<hover:show_text:'&7This player is a " + chatcolor + "Mod&7. &7They have coreinspect and limited console access. If you need a container checked, or if you a question, then these are the people to ask.'>" +
+                                    "<dark_gray>[" + chatcolor + "\uD83C\uDFF9" + chatcolor.replace("<", "</") + "]</dark_gray></hover> ");
+            case "jr-mod" -> MessageTools.parseText(
+                    "<hover:show_text:'&7This player is a " + chatcolor + "Jr. Mod&7. &7They have whitelist and kick permissions. If you a question, then these are the people to ask.'>" +
+                            "<dark_gray>[" + chatcolor + "\uD83C\uDFF9" + chatcolor.replace("<", "</") + "]</dark_gray></hover> ");
+            default -> tag;
+        };
+
 
         Component replacedText = MessageTools.parseFromPath(config, "Chat",
                 Placeholder.component("tag", tag),

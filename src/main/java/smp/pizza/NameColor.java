@@ -37,7 +37,6 @@ public class NameColor implements CommandExecutor {
             }
             return true;
         }
-        System.out.println("incorrect usage");
         player.sendMessage(MessageTools.parseText("&cCorrect Usage: /chatcolor <color code | reset>"));
         return true;
     }

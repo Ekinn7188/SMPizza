@@ -19,13 +19,11 @@ public class Hat implements CommandExecutor {
 
         ItemStack[] armor = p.getInventory().getArmorContents();
 
-        System.out.println(Arrays.toString(armor));
         ItemStack headItem = armor[3];
         armor[3] = p.getInventory().getItemInMainHand();
 
         p.getInventory().setArmorContents(armor);
 
-        System.out.println(Arrays.toString(armor));
         p.getInventory().setItemInMainHand(headItem);
 
         p.updateInventory();
