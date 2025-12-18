@@ -27,7 +27,7 @@ public class KnockbackCommand implements CommandExecutor, TabCompleter {
         try {
             int level = Integer.parseInt(args[0]);
             ItemStack itemStack = p.getInventory().getItemInMainHand();
-            itemStack.addEnchantment(Enchantment.KNOCKBACK, level);
+            itemStack.addUnsafeEnchantment(Enchantment.KNOCKBACK, level);
         } catch (NumberFormatException e) {
             sender.sendMessage(MessageTools.parseText("<red>Invalid level!"));
             return false;

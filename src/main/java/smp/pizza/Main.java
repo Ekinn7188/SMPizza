@@ -43,6 +43,10 @@ public class Main extends JavaPlugin {
         Objects.requireNonNull(this.getCommand("hat")).setExecutor(new Hat());
         Objects.requireNonNull(this.getCommand("knockback")).setExecutor(new KnockbackCommand());
         Objects.requireNonNull(this.getCommand("knockback")).setTabCompleter(new KnockbackCommand());
+        Objects.requireNonNull(this.getCommand("invsee")).setExecutor(new InvSee());
+        Objects.requireNonNull(this.getCommand("invsee")).setTabCompleter(new DefaultTabCompleter());
+        Objects.requireNonNull(this.getCommand("ec")).setExecutor(new Enderchest());
+        Objects.requireNonNull(this.getCommand("ec")).setTabCompleter(new DefaultTabCompleter());
 
 
         Main.getPlugin().getServer().getPluginManager().registerEvents(new Chat(), Main.getPlugin());
